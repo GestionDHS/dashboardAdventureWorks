@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adventure Works Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min-height:100vh}
+.shell{display:flex;min-height:100vh}
+.nav{width:200px;background:#0a0d14;padding:20px 0;flex-shrink:0;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column}
+.nav-logo{padding:0 20px 24px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:16px}
+.nav-logo h2{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;color:#637aff;letter-spacing:3px;text-transform:uppercase}
+.nav-logo p{font-size:11px;color:#4a5568;margin-top:3px}
+.nav-item{padding:10px 20px;color:#8b95a8;cursor:pointer;font-size:13px;border-left:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:8px}
+.nav-item i{font-size:16px}
+.nav-item:hover{color:#c8d0db;background:rgba(255,255,255,.03);border-left-color:rgba(99,122,255,.4)}
+.nav-item.active{color:#fff;background:rgba(99,122,255,.1);border-left-color:#637aff}
+.nav-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:#4a5568}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{background:#0a0d14;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);flex-wrap:wrap;gap:10px}
+.topbar-title{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:#fff;letter-spacing:1px}
+.datebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.datebar label{font-size:11px;color:#8b95a8;font-family:"IBM Plex Mono",monospace}
+.datebar input[type=date]{background:#1a1f2e;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#c8d0db;font-size:12px;font-family:"IBM Plex Mono",monospace;padding:5px 8px;outline:none;cursor:pointer}
+.datebar input[type=date]:focus{border-color:#637aff}
+.dsep{color:#4a5568;font-size:12px}
+.dreset{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#8b95a8;font-size:11px;padding:5px 12px;cursor:pointer;font-family:"IBM Plex Mono",monospace}
+.dreset:hover{border-color:#637aff;color:#637aff}
+.dinfo{font-size:11px;color:#637aff;font-family:"IBM Plex Mono",monospace}
+.content{flex:1;padding:20px 24px;overflow:auto;background:#0f1117}
+.page{display:none}.page.active{display:block}
+.topbar2{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.fbadge{display:none;align-items:center;gap:6px;background:rgba(99,122,255,.15);border:1px solid rgba(99,122,255,.35);border-radius:4px;padding:4px 10px;font-size:11px;color:#a0aec0;cursor:pointer;font-family:"IBM Plex Mono",monospace}
+.fbadge.on{display:inline-flex}.fbadge span{color:#637aff;font-weight:600}
+.fbadge:hover{background:rgba(99,122,255,.25)}
+.krow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.kcard{background:#141824;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:16px 20px}
+.klabel{font-size:10px;color:#8b95a8;margin-bottom:6px;font-family:"IBM Plex Mono",monospace;letter-spacing:1px;text-transform:uppercase}
+.kval{font-size:26px;font-weight:600;color:#fff;font-family:"IBM Plex Mono",monospace;letter-spacing:-1px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ccard{background:#141824;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:16px;min-width:0}
+.ccard.wide{grid-column:1/-1}
+.ctitle{font-size:10px;color:#637aff;margin-bottom:10px;font-family:"IBM Plex Mono",monospace;letter-spacing:2px;text-transform:uppercase}
+.leg{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#8b95a8;cursor:pointer;padding:3px 8px;border-radius:3px;border:1px solid transparent;transition:all .15s;white-space:nowrap;font-family:"IBM Plex Mono",monospace}
+.li:hover{background:rgba(255,255,255,.05)}.li.sel{border-color:rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.04)}
+.ldot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tip{position:fixed;background:#1a1f2e;border:1px solid rgba(99,122,255,.3);border-radius:4px;padding:8px 12px;font-size:12px;color:#fff;pointer-events:none;display:none;z-index:100;font-family:"IBM Plex Mono",monospace}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="nav">
+    <div class="nav-logo"><h2>AWorks</h2><p>Sales Dashboard</p></div>
+    <div class="nav-item active" onclick="switchPage('cats',this)"><i class="ti ti-chart-pie"></i>Categorias</div>
+    <div class="nav-item" onclick="switchPage('terr',this)"><i class="ti ti-map"></i>Territorios</div>
+    <div class="nav-footer">Adventure Works 2015-2017</div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">ADVENTURE WORKS</div>
+      <div class="datebar">
+        <i class="ti ti-calendar" style="color:#637aff;font-size:16px"></i>
+        <label>Desde</label>
+        <input type="date" id="dFrom" value="2015-01-01" min="2015-01-01" max="2017-06-30">
+        <span class="dsep">to</span>
+        <label>Hasta</label>
+        <input type="date" id="dTo" value="2017-06-30" min="2015-01-01" max="2017-06-30">
+        <button class="dreset" onclick="resetDates()">Reset</button>
+        <span class="dinfo" id="dInfo">30 meses</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="page active" id="page-cats">
+        <div class="topbar2">
+          <div class="fbadge" id="fb1" onclick="clearCat1()">CAT: <span id="fl1"></span> X</div>
+          <div class="fbadge" id="fbSub" onclick="clearSub()">SUB: <span id="flSub"></span> X</div>
+        </div>
+        <div class="krow">
+          <div class="kcard"><div class="klabel">Facturacion</div><div class="kval" id="kf">-</div></div>
+          <div class="kcard"><div class="klabel">Articulos Vendidos</div><div class="kval" id="kq">-</div></div>
+        </div>
+        <div class="cgrid">
+          <div class="ccard">
+            <div class="ctitle">Ventas por Categoria</div>
+            <div class="leg" id="leg1"></div>
+            <div style="position:relative;height:200px"><canvas id="pie1"></canvas></div>
+          </div>
+          <div class="ccard">
+            <div class="ctitle">Ventas por Subcategoria </div>
+            <div style="position:relative" id="hbw"><canvas id="hbar"></canvas></div>
+          </div>
+          <div class="ccard wide">
+            <div class="ctitle">Evolucion de Ventas</div>
+            <div class="leg">
+              <span class="li"><span style="display:inline-block;width:18px;height:2px;background:#9e9e9e;vertical-align:middle;margin-right:2px"></span>Facturacion</span>
+              <span class="li"><span style="display:inline-block;width:10px;height:10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);margin-right:2px"></span>Cantidad</span>
+            </div>
+            <div style="position:relative;height:200px"><canvas id="line1"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="page" id="page-terr">
+        <div class="topbar2">
+          <div class="fbadge" id="fbCont" onclick="clearCont()">CONT: <span id="flCont"></span> X</div>
+          <div class="fbadge" id="fbCat2" onclick="clearCat2()">CAT: <span id="flCat2"></span> X</div>
+        </div>
+        <div class="krow">
+          <div class="kcard"><div class="klabel">Facturacion</div><div class="kval" id="kft">-</div></div>
+          <div class="kcard"><div class="klabel">Articulos Vendidos</div><div class="kval" id="kqt">-</div></div>
+        </div>
+        <div class="cgrid">
+          <div class="ccard">
+            <div class="ctitle">Ventas por Categoria</div>
+            <div class="leg" id="leg2cat"></div>
+            <div style="position:relative;height:200px"><canvas id="pie2"></canvas></div>
+          </div>
+          <div class="ccard">
+            <div class="ctitle">Facturacion por Continente</div>
+            <div class="leg" id="leg2cont"></div>
+            <div style="position:relative;height:200px"><canvas id="tbar"></canvas></div>
+          </div>
+          <div class="ccard wide">
+            <div class="ctitle">Mapa de Ventas por Pais</div>
+            <div id="mapWrap" style="width:100%;height:300px;border-radius:4px;overflow:hidden;background:#0a0d14;position:relative;">
+              <div id="mapLoad" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a5568;font-size:13px;font-family:IBM Plex Mono,monospace">Cargando mapa...</div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
+              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace">Facturacion:</span>
+              <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:linear-gradient(to right,#312e81,#7c3aed,#a78bfa)"></span>
+              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace">menor a mayor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tip" id="mapTip"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+
+var MO=["2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06"];
+var ML=["01/15","02/15","03/15","04/15","05/15","06/15","07/15","08/15","09/15","10/15","11/15","12/15","01/16","02/16","03/16","04/16","05/16","06/16","07/16","08/16","09/16","10/16","11/16","12/16","01/17","02/17","03/17","04/17","05/17","06/17"];
+var EF=[585312.65,532226.25,643436.1,653364.04,659325.9,669988.67,486115.01,536452.82,344062.87,404276.6,326611.15,563761.53,432425.74,474162.79,471961.88,494957.42,545534.74,533824.98,303980.4,643591.71,340300.75,363112.82,441183.2,922170.63,1725307.54,1798660.54,1976944.49,2092726.76,2425413.22,2523393.63];
+var EQ=[184,165,198,204,206,212,247,278,196,223,191,326,242,267,266,290,329,312,720,2295,2531,2570,2640,5417,9868,9597,10371,10764,11523,11542];
+var CC={Accessories:"#e91e8c",Bikes:"#3b82f6",Clothing:"#06b6d4"};
+var CATS=["Accessories","Bikes","Clothing"];
+var EBC={Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6584.71,25652.94,29371.23,31093.03,31299.31,63257.43,111670.71,108224.21,118889.61,122322.27,132762.07,125545.59],Bikes:[585312.65,532226.25,643436.1,653364.04,659325.9,669988.67,486115.01,536452.82,344062.87,404276.6,326611.15,563761.53,432425.74,474162.79,471961.88,494957.42,545534.74,533824.98,294816.7,608412.97,299689.8,320176.63,396463.81,834810.48,1566987.96,1646773.75,1810364.72,1920284.63,2242421.45,2343491.08],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2578.99,9525.8,11239.73,11843.16,13420.08,24102.72,46648.87,43662.57,47690.16,50119.86,50229.7,54356.96]};
+var EQC={Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,445,1576,1925,1941,1933,4032,7279,6984,7568,7794,8245,8087],Bikes:[184,165,198,204,206,212,247,278,196,223,191,326,242,267,266,290,329,312,182,397,211,222,267,564,1035,1072,1207,1295,1544,1597],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,93,322,395,407,440,821,1554,1541,1596,1675,1734,1858]};
+var SC=[{cat:"Accessories",name:"Tires and Tubes",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,157,685,1069,1067,1028,2166,3834,3634,3929,4126,4116,3961]},{cat:"Accessories",name:"Bottles and Cages",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,188,479,479,437,474,1009,1854,1840,1976,2011,2159,2200]},{cat:"Bikes",name:"Road Bikes",qty:[148,147,159,165,161,170,196,214,155,150,146,216,151,164,161,182,196,181,80,181,106,107,109,248,406,447,503,548,645,657]},{cat:"Accessories",name:"Helmets",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,52,163,173,213,177,410,701,693,811,822,920,899]},{cat:"Bikes",name:"Mountain Bikes",qty:[36,18,39,39,45,42,51,64,41,73,45,110,91,103,105,108,133,131,71,153,69,70,106,195,380,384,424,453,542,585]},{cat:"Clothing",name:"Caps",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,37,119,135,141,141,274,492,530,536,536,578,632]},{cat:"Accessories",name:"Fenders",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,133,120,134,145,230,522,459,512,473,596,604]},{cat:"Clothing",name:"Jerseys",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,27,89,91,97,105,214,418,343,410,413,420,486]},{cat:"Clothing",name:"Gloves",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,62,78,87,97,177,338,338,302,366,400,384]},{cat:"Bikes",name:"Touring Bikes",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,63,36,45,52,121,249,241,280,294,357,355]},{cat:"Accessories",name:"Cleaners",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,71,46,51,59,125,225,207,181,208,258,266]},{cat:"Clothing",name:"Socks",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,18,44,33,35,67,128,148,142,145,141,155]},{cat:"Clothing",name:"Shorts",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,21,35,34,46,65,107,115,130,134,121,136]},{cat:"Accessories",name:"Hydration Packs",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,24,21,20,25,50,87,89,94,79,107,93]},{cat:"Clothing",name:"Vests",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,13,12,15,16,24,71,67,76,81,74,65]},{cat:"Accessories",name:"Bike Racks",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,7,14,15,27,27,34,37,34,54,40]},{cat:"Accessories",name:"Bike Stands",qty:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,8,10,5,10,15,29,28,28,41,35,24]}];
+var SC_F={"Tires and Tubes":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2144.4,8998.74,13526.35,13822.41,13493.38,27823.68,48612.97,46370.41,50464.02,52923.02,52750.7,49896.6],"Bottles and Cages":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1408.12,3447.21,3350.21,3084.63,3349.26,7028.91,13224.46,13069.6,14012.24,14374.89,15526.41,15869.0],"Road Bikes":[463363.01,471301.43,511361.49,521314.43,507001.35,527689.09,381142.25,404730.18,259491.81,253911.18,233888.34,337289.3,245042.62,262011.92,255601.21,272382.49,271643.08,263741.33,113765.66,249581.07,127224.57,130506.75,130906.67,310221.95,491548.26,548358.61,595913.15,648637.1,733425.73,764186.66],"Helmets":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1768.34,5567.44,5906.58,7260.42,6035.77,13981.19,23935.84,23623.62,27659.58,28031.01,31404.85,30659.3],"Mountain Bikes":[121949.64,60924.82,132074.61,132049.61,152324.55,142299.58,104972.76,131722.64,84571.06,150365.42,92722.81,226472.23,187383.11,212150.86,216360.67,222574.93,273891.67,270083.65,129159.89,259008.2,114275.61,114724.57,183525.38,314373.94,621904.83,653205.64,699447.57,741773.91,875342.29,962111.33],"Caps":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,319.84,1028.66,1166.97,1218.83,1218.83,2368.51,4252.95,4581.43,4633.29,4633.29,4996.35,5463.13],"Fenders":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,703.36,2923.34,2637.6,2945.32,3187.1,5055.4,11473.56,10088.82,11253.76,10396.54,13100.08,13275.92],"Jerseys":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1398.5,4580.05,4628.8,4946.82,5366.89,10890.52,21288.52,17488.02,20744.07,21042.26,21378.73,24811.77],"Gloves":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,353.22,1459.98,1836.75,2048.68,2284.17,4168.01,7959.26,7959.26,7111.53,8618.6,9419.24,9042.47],"Touring Bikes":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,51891.15,99823.71,58189.62,74945.31,82031.76,210214.59,453534.87,445209.51,515004.0,529873.62,633653.43,617193.09],"Cleaners":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71.55,564.45,365.7,405.45,469.05,993.75,1788.75,1645.65,1438.95,1653.6,2051.1,2114.7],"Socks":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,62.93,161.82,395.56,296.67,314.65,602.33,1150.72,1330.52,1276.58,1303.55,1267.59,1393.45],"Shorts":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1469.79,2449.65,2379.66,3219.54,4549.35,7488.93,8048.85,9098.7,9378.66,8468.79,9518.64],"Hydration Packs":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,329.94,1319.76,1154.79,1099.8,1374.75,2749.5,4784.13,4894.11,5169.06,4344.21,5883.93,5114.07],"Vests":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,444.5,825.5,762.0,952.5,1016.0,1524.0,4508.5,4254.5,4826.0,5143.5,4699.0,4127.5],"Bike Racks":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1560.0,840.0,1680.0,1800.0,3240.0,3240.0,4080.0,4440.0,4080.0,6480.0,4800.0],"Bike Stands":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,159.0,1272.0,1590.0,795.0,1590.0,2385.0,4611.0,4452.0,4452.0,6519.0,5565.0,3816.0]};
+var SC_Q={"Tires and Tubes":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,157,685,1069,1067,1028,2166,3834,3634,3929,4126,4116,3961],"Bottles and Cages":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,188,479,479,437,474,1009,1854,1840,1976,2011,2159,2200],"Road Bikes":[148,147,159,165,161,170,196,214,155,150,146,216,151,164,161,182,196,181,80,181,106,107,109,248,406,447,503,548,645,657],"Helmets":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,52,163,173,213,177,410,701,693,811,822,920,899],"Mountain Bikes":[36,18,39,39,45,42,51,64,41,73,45,110,91,103,105,108,133,131,71,153,69,70,106,195,380,384,424,453,542,585],"Caps":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,37,119,135,141,141,274,492,530,536,536,578,632],"Fenders":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,133,120,134,145,230,522,459,512,473,596,604],"Jerseys":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,27,89,91,97,105,214,418,343,410,413,420,486],"Gloves":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,62,78,87,97,177,338,338,302,366,400,384],"Touring Bikes":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,63,36,45,52,121,249,241,280,294,357,355],"Cleaners":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,71,46,51,59,125,225,207,181,208,258,266],"Socks":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,18,44,33,35,67,128,148,142,145,141,155],"Shorts":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,21,35,34,46,65,107,115,130,134,121,136],"Hydration Packs":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,24,21,20,25,50,87,89,94,79,107,93],"Vests":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,13,12,15,16,24,71,67,76,81,74,65],"Bike Racks":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,7,14,15,27,27,34,37,34,54,40],"Bike Stands":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,8,10,5,10,15,29,28,28,41,35,24]};
+var CONT_F={"North America":[256439.46,250713.9,271559.42,309236.13,339165.22,333674.18,237431.85,250968.9,94216.17,97877.13,105781.07,162836.31,109948.22,102158.51,103904.18,116090.25,169645.19,134903.85,75369.52,253991.04,131199.08,165259.97,148819.19,351161.93,688030.94,688278.0,793209.17,816601.28,1085834.73,1063940.41],"Europe":[109342.35,121628.64,139291.71,126630.1,118050.37,126655.1,120435.96,136498.48,134350.93,122375.35,118565.14,200545.03,139378.98,167384.25,174936.14,177914.92,174242.4,203943.21,129343.82,235307.97,128684.6,116066.43,164546.74,314729.7,543581.69,584921.01,642221.15,689142.89,771893.32,857276.98],"Pacific":[219530.84,159883.71,232584.98,217497.8,202110.31,209659.38,128247.19,148985.43,115495.77,184024.11,102264.95,200380.18,183098.54,204620.02,193121.55,200952.25,201647.16,194977.92,99267.05,154292.7,80417.07,81786.43,127817.26,256278.99,493694.92,525461.53,541514.17,586982.59,567685.16,602176.24]};
+var CONT_Q={"North America":[81,77,82,95,103,102,116,127,61,60,66,102,68,67,66,78,109,87,190,1107,1289,1379,1191,2684,4915,4597,5142,5293,5811,5572],"Europe":[35,40,45,43,39,43,66,75,74,67,67,116,77,92,96,104,109,117,323,689,795,695,857,1702,2924,2800,3064,3228,3462,3662],"Pacific":[68,48,71,66,64,67,65,76,61,96,58,108,97,108,104,108,111,108,207,499,447,496,592,1031,2029,2200,2165,2243,2250,2308]};
+var CONTCAT_F={"North America":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1958.82,12653.56,15448.57,17732.89,15003.94,33715.85,57012.45,52152.73,61438.49,61700.79,69418.21,61295.37],Bikes:[256439.46,250713.9,271559.42,309236.13,339165.22,333674.18,237431.85,250968.9,94216.17,97877.13,105781.07,162836.31,109948.22,102158.51,103904.18,116090.25,169645.19,134903.85,72762.87,235988.38,110105.32,140603.13,126823.39,305293.81,606501.07,611740.96,706738.83,727144.81,988760.6,972591.58],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,647.84,5349.1,5645.19,6923.95,6991.86,12152.27,24517.41,24384.31,25031.84,27755.67,27655.93,30053.46]},"Europe":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2981.88,7259.69,8843.27,8012.65,9693.44,19233.11,32899.77,31895.95,33604.59,35995.99,38302.57,38876.02],Bikes:[109342.35,121628.64,139291.71,126630.1,118050.37,126655.1,120435.96,136498.48,134350.93,122375.35,118565.14,200545.03,139378.98,167384.25,174936.14,177914.92,174242.4,203943.21,125139.15,225160.51,116288.5,105541.93,151274.6,289329.07,498671.02,542958.5,597420.07,640935.15,721080.82,804556.17],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1222.79,2887.77,3552.83,2511.86,3578.7,6167.52,12010.9,10066.55,11196.49,12211.76,12509.94,13844.79]},"Pacific":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1644.01,5739.7,5079.39,5347.5,6601.93,10308.46,21758.49,24175.53,23846.52,24625.49,25041.3,25374.19],Bikes:[219530.84,159883.71,232584.98,217497.8,202110.31,209659.38,128247.19,148985.43,115495.77,184024.11,102264.95,200380.18,183098.54,204620.02,193121.55,200952.25,201647.16,194977.92,96914.68,147264.08,73295.97,74031.57,118365.82,240187.6,461815.87,492074.29,506205.81,552204.66,532580.04,566343.33],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,708.36,1288.93,2041.71,2407.36,2849.52,5782.93,10120.56,9211.72,11461.84,10152.43,10063.83,10458.72]}};
+var CONTCAT_Q={"North America":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,120,769,1013,1057,885,2063,3747,3418,3875,3932,4269,3961],Bikes:[81,77,82,95,103,102,116,127,61,60,66,102,68,67,66,78,109,87,48,164,78,102,92,217,411,409,469,495,659,654],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,174,198,220,214,404,757,770,798,866,883,957]},"Europe":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,444,578,522,625,1287,2143,2042,2201,2308,2441,2548],Bikes:[35,40,45,43,39,43,66,75,74,67,67,116,77,92,96,104,109,117,79,141,86,69,97,198,329,358,400,441,513,549],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,43,104,131,104,135,217,452,400,463,479,508,565]},"Pacific":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,124,363,334,362,423,682,1389,1524,1492,1554,1535,1578],Bikes:[68,48,71,66,64,67,65,76,61,96,58,108,97,108,104,108,111,108,55,92,47,51,78,149,295,305,338,359,372,394],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,28,44,66,83,91,200,345,371,335,330,343,336]}};
+var CONTS=["North America","Europe","Pacific"];
+var CONT_C={"North America":"#8b5cf6","Europe":"#3b82f6","Pacific":"#06b6d4"};
+var PAIS_ISO={"United States":"840","Canada":"124","France":"250","Germany":"276","United Kingdom":"826","Australia":"36"};
+var PAIS_CONT={"United States":"North America","Canada":"North America","France":"Europe","Germany":"Europe","United Kingdom":"Europe","Australia":"Pacific"};
+var PAIS_F={"United States":[206026.14,96734.03,235980.0,241452.28,293029.27,268451.97,188222.64,183518.2,77217.88,72491.61,96885.6,139397.69,93660.81,89010.04,77774.6,104314.1,141953.58,129385.14,62905.95,215049.19,108607.21,138256.78,125875.06,276996.56,549937.56,592657.62,659953.15,668552.36,918848.46,885853.94],"Canada":[50413.32,153979.87,35579.42,67783.85,46135.95,65222.22,49209.21,67450.7,16998.3,25385.52,8895.46,23438.63,16287.41,13148.47,26129.58,11776.15,27691.61,5518.71,12463.58,38941.86,22591.88,27003.19,22944.13,74165.37,138093.38,95620.38,133256.02,148048.92,166986.27,178086.47],"France":[29667.8,30316.89,42068.34,40759.17,51786.51,35496.64,40241.52,41523.31,47871.57,42630.31,23663.64,77296.55,40474.58,40472.97,63888.39,58523.14,53984.65,88551.24,42557.77,69292.7,35003.64,31149.45,49717.45,105439.83,132409.04,185078.18,168780.52,211165.12,223748.03,259084.35],"Germany":[8376.46,44134.16,61123.13,50494.8,44476.69,55033.22,38931.43,33888.44,37259.38,30762.94,49903.39,49629.81,37579.88,63945.44,50172.22,70807.09,54492.53,63445.75,50197.26,59736.37,32017.89,50882.56,45165.73,111670.51,199223.83,175943.61,206550.81,218848.15,269789.16,260197.33],"United Kingdom":[71298.1,47177.59,36100.24,35376.14,21787.16,36125.24,41263.01,61086.73,49219.98,48982.1,44998.11,73618.67,61324.52,62965.84,60875.53,48584.68,65765.21,51946.22,36588.79,106278.9,61663.07,34034.42,69663.57,97619.35,211948.81,223899.22,266889.82,259129.63,278356.14,337995.3],"Australia":[219530.84,159883.71,232584.98,217497.8,202110.31,209659.38,128247.19,148985.43,115495.77,184024.11,102264.95,200380.18,183098.54,204620.02,193121.55,200952.25,201647.16,194977.92,99267.05,154292.7,80417.07,81786.43,127817.26,256278.99,493694.92,525461.53,541514.17,586982.59,567685.16,602176.24]};
+var PAISCAT_F={"United States":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1739.39,9403.97,10387.72,11664.24,10664.33,23533.7,40330.59,39229.42,44335.85,42822.27,50813.48,45169.33],Bikes:[206026.14,96734.03,235980.0,241452.28,293029.27,268451.97,188222.64,183518.2,77217.88,72491.61,96885.6,139397.69,93660.81,89010.04,77774.6,104314.1,141953.58,129385.14,60630.28,202154.37,94475.42,121926.07,109881.11,245151.52,492815.73,535446.28,597236.42,605847.99,847396.04,818841.16],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,536.27,3490.84,3744.06,4666.46,5329.62,8311.34,16791.24,17981.93,18380.88,19882.09,20638.94,21843.45]},"Canada":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,219.42,3249.59,5060.84,6068.65,4339.61,10182.15,16681.86,12923.31,17102.64,18878.52,18604.72,16126.04],Bikes:[50413.32,153979.87,35579.42,67783.85,46135.95,65222.22,49209.21,67450.7,16998.3,25385.52,8895.46,23438.63,16287.41,13148.47,26129.58,11776.15,27691.61,5518.71,12132.59,33834.01,15629.9,18677.05,16942.28,60142.29,113685.34,76294.69,109502.41,121296.82,141364.56,153750.42],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111.57,1858.26,1901.14,2257.49,1662.24,3840.93,7726.18,6402.38,6650.96,7873.58,7016.99,8210.01]},"France":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,896.29,2243.17,2845.21,2550.34,2603.13,6732.8,8908.59,10576.09,11320.71,11396.55,12213.29,11826.75],Bikes:[29667.8,30316.89,42068.34,40759.17,51786.51,35496.64,40241.52,41523.31,47871.57,42630.31,23663.64,77296.55,40474.58,40472.97,63888.39,58523.14,53984.65,88551.24,41331.65,66150.19,30494.1,27484.34,46309.92,96004.73,120089.59,171184.83,154434.96,195552.92,207628.72,242868.62],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,329.83,899.34,1664.33,1114.76,804.39,2702.3,3410.86,3317.27,3024.85,4215.65,3906.02,4388.98]},"Germany":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1216.01,2146.44,2543.57,2852.69,2770.94,6027.25,11074.74,9845.57,8987.31,10767.64,12279.46,12230.4],Bikes:[8376.46,44134.16,61123.13,50494.8,44476.69,55033.22,38931.43,33888.44,37259.38,30762.94,49903.39,49629.81,37579.88,63945.44,50172.22,70807.09,54492.53,63445.75,48376.81,56610.52,28749.75,47408.29,41404.12,103857.07,184578.81,163098.65,194075.98,204914.57,253763.47,244226.72],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,604.44,979.41,724.58,621.58,990.67,1786.2,3570.28,2999.39,3487.52,3165.93,3746.23,3740.21]},"United Kingdom":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,869.58,2870.07,3454.49,2609.62,4319.37,6473.06,12916.43,11474.3,13296.58,13831.79,13809.82,14818.87],Bikes:[71298.1,47177.59,36100.24,35376.14,21787.16,36125.24,41263.01,61086.73,49219.98,48982.1,44998.11,73618.67,61324.52,62965.84,60875.53,48584.68,65765.21,51946.22,35430.68,102399.81,57044.66,30649.3,63560.56,89467.27,194002.62,208675.02,248909.13,240467.66,259688.63,317460.83],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,288.53,1009.02,1163.92,775.51,1783.64,1679.02,5029.77,3749.9,4684.12,4830.18,4857.69,5715.61]},"Australia":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1644.01,5739.7,5079.39,5347.5,6601.93,10308.46,21758.49,24175.53,23846.52,24625.49,25041.3,25374.19],Bikes:[219530.84,159883.71,232584.98,217497.8,202110.31,209659.38,128247.19,148985.43,115495.77,184024.11,102264.95,200380.18,183098.54,204620.02,193121.55,200952.25,201647.16,194977.92,96914.68,147264.08,73295.97,74031.57,118365.82,240187.6,461815.87,492074.29,506205.81,552204.66,532580.04,566343.33],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,708.36,1288.93,2041.71,2407.36,2849.52,5782.93,10120.56,9211.72,11461.84,10152.43,10063.83,10458.72]}};
+
+var fi=0,ti=29,selCat1=null,selSub=null,selCont=null,selCat2=null,worldFeatures=null,mapSvg=null;
+function sl(a){return a.slice(fi,ti+1);}
+function ss(a){return sl(a).reduce(function(s,v){return s+v;},0);}
+function fmt(n){return n>=1e6?"$"+(n/1e6).toFixed(2)+"M":n>=1e3?"$"+(n/1e3).toFixed(1)+"K":"$"+Math.round(n);}
+function getPaisVal(p){return selCat2?ss(PAISCAT_F[p][selCat2]):ss(PAIS_F[p]);}
+function getContVal(c){return selCat2?ss(CONTCAT_F[c][selCat2]):ss(CONT_F[c]);}
+function getCatVal(cat){return selCont?ss(CONTCAT_F[selCont][cat]):ss(EBC[cat]);}
+function getTFact(){if(selCont&&selCat2)return ss(CONTCAT_F[selCont][selCat2]);if(selCont)return ss(CONT_F[selCont]);if(selCat2)return ss(EBC[selCat2]);return ss(EF);}
+function getTQty(){if(selCont&&selCat2)return ss(CONTCAT_Q[selCont][selCat2]);if(selCont)return ss(CONT_Q[selCont]);if(selCat2)return ss(EQC[selCat2]);return ss(EQ);}
+
+// KPIs pagina 1 con logica de subcategoria
+function getP1Fact(){
+  if(selSub) return ss(SC_F[selSub]);
+  if(selCat1) return ss(EBC[selCat1]);
+  return ss(EF);
+}
+function getP1Qty(){
+  if(selSub) return ss(SC_Q[selSub]);
+  if(selCat1) return ss(EQC[selCat1]);
+  return ss(EQ);
+}
+
+function switchPage(p,el){
+  document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active");});
+  document.querySelectorAll(".nav-item").forEach(function(x){x.classList.remove("active");});
+  document.getElementById("page-"+p).classList.add("active");
+  el.classList.add("active");
+  if(p==="terr"&&worldFeatures)updateMap();
+}
+function ymToIdx(s){var i=MO.indexOf(s.slice(0,7));return i<0?-1:i;}
+function applyDates(){
+  var a=ymToIdx(document.getElementById("dFrom").value);
+  var b=ymToIdx(document.getElementById("dTo").value);
+  if(a<0)a=0;if(b<0)b=29;if(a>b){a=0;b=29;}
+  fi=a;ti=b;
+  document.getElementById("dInfo").textContent=(b-a+1)+" meses";
+  refreshAll();
+}
+function resetDates(){
+  document.getElementById("dFrom").value="2015-01-01";
+  document.getElementById("dTo").value="2017-06-30";
+  fi=0;ti=29;document.getElementById("dInfo").textContent="30 meses";refreshAll();
+}
+document.getElementById("dFrom").addEventListener("change",applyDates);
+document.getElementById("dTo").addEventListener("change",applyDates);
+
+function clearCat1(){selCat1=null;selSub=null;renderP1();}
+function clearSub(){selSub=null;renderP1();}
+
+function renderP1(){
+  // badge categoria
+  var b1=document.getElementById("fb1");
+  if(selCat1){b1.classList.add("on");document.getElementById("fl1").textContent=selCat1;}else{b1.classList.remove("on");}
+  // badge subcategoria
+  var bSub=document.getElementById("fbSub");
+  if(selSub){bSub.classList.add("on");document.getElementById("flSub").textContent=selSub;}else{bSub.classList.remove("on");}
+  // KPIs
+  document.getElementById("kf").textContent=fmt(getP1Fact());
+  document.getElementById("kq").textContent=Math.round(getP1Qty()).toLocaleString();
+  // leyenda categorias
+  var l=document.getElementById("leg1");l.innerHTML="";
+  var tot=ss(EF);
+  CATS.forEach(function(c){
+    var pct=tot>0?(ss(EBC[c])/tot*100).toFixed(1):0;
+    var el=document.createElement("span");
+    el.className="li"+(selCat1===c?" sel":"");
+    el.innerHTML='<span class="ldot" style="background:'+CC[c]+'"></span>'+c+" "+pct+"%";
+    el.onclick=(function(cat){return function(){
+      selSub=null; // limpiar subcategoria al cambiar categoria
+      selCat1=selCat1===cat?null:cat;
+      renderP1();
+    };})(c);
+    l.appendChild(el);
+  });
+  updatePie1();updateHbar();updateLine1();
+}
+
+var pie1c,hbarc,line1c;
+function initPie1(){
+  pie1c=new Chart(document.getElementById("pie1").getContext("2d"),{
+    type:"pie",
+    data:{labels:CATS,datasets:[{data:CATS.map(function(c){return ss(EBC[c]);}),backgroundColor:CATS.map(function(c){return CC[c];}),borderWidth:2,borderColor:"#0f1117"}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:function(_,els){
+        var c=els.length?CATS[els[0].index]:null;
+        selSub=null;
+        selCat1=selCat1===c?null:c;
+        renderP1();
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+": "+(ctx.parsed/t*100).toFixed(1)+"%";}}}}
+    }
+  });
+}
+function updatePie1(){
+  if(!pie1c)return;
+  pie1c.data.datasets[0].data=CATS.map(function(c){return ss(EBC[c]);});
+  pie1c.data.datasets[0].backgroundColor=CATS.map(function(c){return(!selCat1||selCat1===c)?CC[c]:CC[c]+"40";});
+  pie1c.update();
+}
+
+function getVisibleSC(){
+  return SC.filter(function(s){return!selCat1||s.cat===selCat1;})
+    .map(function(s){return{cat:s.cat,name:s.name,qty:ss(s.qty)};})
+    .filter(function(s){return s.qty>0;})
+    .sort(function(a,b){return b.qty-a.qty;});
+}
+
+function initHbar(){
+  var d=getVisibleSC();
+  document.getElementById("hbw").style.height=Math.max(200,d.length*30+60)+"px";
+  hbarc=new Chart(document.getElementById("hbar").getContext("2d"),{
+    type:"bar",
+    data:{labels:d.map(function(s){return s.name;}),datasets:[{data:d.map(function(s){return s.qty;}),backgroundColor:d.map(function(s){return CC[s.cat];}),borderWidth:0}]},
+    options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,animation:{duration:200},
+      onClick:function(_,els){
+        if(!els.length)return;
+        var name=hbarc.data.labels[els[0].index];
+        selSub=selSub===name?null:name;
+        // si la subcategoria seleccionada no corresponde a la categoria activa, limpiar categoria
+        if(selSub){
+          var found=SC.find(function(s){return s.name===selSub;});
+          if(found&&selCat1&&found.cat!==selCat1){selCat1=null;}
+        }
+        renderP1();
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x.toLocaleString()+" articulos";}}}},
+      scales:{
+        x:{ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1000?(v/1000).toFixed(0)+"K":v;}},grid:{color:"rgba(255,255,255,.04)"},title:{display:true,text:"Articulos Vendidos",color:"#4a5568",font:{size:10}}},
+        y:{ticks:{color:"#8b95a8",font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function updateHbar(){
+  if(!hbarc)return;
+  var d=getVisibleSC();
+  hbarc.data.labels=d.map(function(s){return s.name;});
+  // color: resaltar subcategoria seleccionada
+  hbarc.data.datasets[0].data=d.map(function(s){return s.qty;});
+  hbarc.data.datasets[0].backgroundColor=d.map(function(s){
+    var base=CC[s.cat];
+    if(selSub&&selSub!==s.name)return base+"40";
+    return base;
+  });
+  document.getElementById("hbw").style.height=Math.max(200,d.length*30+60)+"px";
+  hbarc.update();
+}
+
+function initLine1(){
+  line1c=new Chart(document.getElementById("line1").getContext("2d"),{
+    data:{labels:sl(ML),datasets:[
+      {type:"line",label:"Facturacion",data:sl(EF),borderColor:"#6b7280",borderWidth:2,pointRadius:0,yAxisID:"y",tension:0.3,fill:false},
+      {type:"bar",label:"Cantidad",data:sl(EQ),backgroundColor:"rgba(255,255,255,.1)",borderColor:"rgba(255,255,255,.2)",borderWidth:1,yAxisID:"y2"}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:"#4a5568",font:{size:9},maxRotation:45,autoSkip:false},grid:{color:"rgba(255,255,255,.04)"}},
+        y:{position:"left",ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1e6?(v/1e6).toFixed(1)+"M":(v/1e3).toFixed(0)+"K";}},grid:{color:"rgba(255,255,255,.04)"},title:{display:true,text:"Facturacion",color:"#4a5568",font:{size:10}}},
+        y2:{position:"right",ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1000?(v/1000).toFixed(0)+"K":v;}},grid:{display:false},title:{display:true,text:"Cantidad",color:"#4a5568",font:{size:10}}}
+      }
+    }
+  });
+}
+
+function updateLine1(){
+  if(!line1c)return;
+  var factData,qtyData,col;
+  if(selSub){
+    factData=sl(SC_F[selSub]);
+    qtyData=sl(SC_Q[selSub]);
+    // color segun categoria de la subcategoria
+    var found=SC.find(function(s){return s.name===selSub;});
+    col=found?CC[found.cat]:"#637aff";
+  } else if(selCat1){
+    factData=sl(EBC[selCat1]);
+    qtyData=sl(EQC[selCat1]);
+    col=CC[selCat1];
+  } else {
+    factData=sl(EF);
+    qtyData=sl(EQ);
+    col="#6b7280";
+  }
+  line1c.data.labels=sl(ML);
+  line1c.data.datasets[0].data=factData;
+  line1c.data.datasets[0].borderColor=col;
+  line1c.data.datasets[1].data=qtyData;
+  line1c.data.datasets[1].backgroundColor=col+"33";
+  line1c.data.datasets[1].borderColor=col+"66";
+  line1c.update();
+}
+
+// PAGE 2
+function clearCont(){selCont=null;renderP2();}
+function clearCat2(){selCat2=null;renderP2();}
+function renderP2(){
+  var bc=document.getElementById("fbCont");
+  if(selCont){bc.classList.add("on");document.getElementById("flCont").textContent=selCont;}else{bc.classList.remove("on");}
+  var bk=document.getElementById("fbCat2");
+  if(selCat2){bk.classList.add("on");document.getElementById("flCat2").textContent=selCat2;}else{bk.classList.remove("on");}
+  document.getElementById("kft").textContent=fmt(getTFact());
+  document.getElementById("kqt").textContent=Math.round(getTQty()).toLocaleString();
+  var lc=document.getElementById("leg2cont");lc.innerHTML="";
+  CONTS.forEach(function(c){
+    var el=document.createElement("span");
+    el.className="li"+(selCont===c?" sel":"");
+    el.innerHTML='<span class="ldot" style="background:'+CONT_C[c]+'"></span>'+c+" "+fmt(getContVal(c));
+    el.onclick=(function(cont){return function(){selCont=selCont===cont?null:cont;renderP2();};})(c);
+    lc.appendChild(el);
+  });
+  var lk=document.getElementById("leg2cat");lk.innerHTML="";
+  var tot=CATS.reduce(function(s,c){return s+getCatVal(c);},0);
+  CATS.forEach(function(c){
+    var pct=tot>0?(getCatVal(c)/tot*100).toFixed(1):0;
+    var el=document.createElement("span");
+    el.className="li"+(selCat2===c?" sel":"");
+    el.innerHTML='<span class="ldot" style="background:'+CC[c]+'"></span>'+c+" "+pct+"%";
+    el.onclick=(function(cat){return function(){selCat2=selCat2===cat?null:cat;renderP2();};})(c);
+    lk.appendChild(el);
+  });
+  updatePie2();updateTbar();updateMap();
+}
+var pie2c,tbarc;
+function initPie2(){
+  pie2c=new Chart(document.getElementById("pie2").getContext("2d"),{
+    type:"pie",
+    data:{labels:CATS,datasets:[{data:CATS.map(function(c){return getCatVal(c);}),backgroundColor:CATS.map(function(c){return CC[c];}),borderWidth:2,borderColor:"#0f1117"}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:function(_,els){var c=els.length?CATS[els[0].index]:null;selCat2=selCat2===c?null:c;renderP2();},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+": "+(ctx.parsed/t*100).toFixed(1)+"%";}}}}
+    }
+  });
+}
+function updatePie2(){
+  if(!pie2c)return;
+  pie2c.data.datasets[0].data=CATS.map(function(c){return getCatVal(c);});
+  pie2c.data.datasets[0].backgroundColor=CATS.map(function(c){return(!selCat2||selCat2===c)?CC[c]:CC[c]+"40";});
+  pie2c.update();
+}
+function initTbar(){
+  tbarc=new Chart(document.getElementById("tbar").getContext("2d"),{
+    type:"bar",
+    data:{labels:CONTS,datasets:[{data:CONTS.map(function(c){return getContVal(c);}),backgroundColor:CONTS.map(function(c){return CONT_C[c];}),borderWidth:0,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},
+      onClick:function(_,els){var c=els.length?CONTS[els[0].index]:null;selCont=selCont===c?null:c;renderP2();},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return "$"+(ctx.parsed.y/1e6).toFixed(2)+"M";}}}},
+      scales:{x:{ticks:{color:"#8b95a8",font:{size:11}},grid:{display:false}},y:{ticks:{color:"#4a5568",font:{size:10},callback:function(v){return "$"+(v/1e6).toFixed(1)+"M";}},grid:{color:"rgba(255,255,255,.04)"}}}
+    }
+  });
+}
+function updateTbar(){
+  if(!tbarc)return;
+  tbarc.data.datasets[0].data=CONTS.map(function(c){return getContVal(c);});
+  tbarc.data.datasets[0].backgroundColor=CONTS.map(function(c){return(!selCont||selCont===c)?CONT_C[c]:CONT_C[c]+"40";});
+  tbarc.update();
+}
+function updateMap(){
+  if(!mapSvg||!worldFeatures)return;
+  var paises=Object.keys(PAIS_ISO);
+  var active=paises.filter(function(p){return!selCont||PAIS_CONT[p]===selCont;});
+  var maxVal=Math.max.apply(null,active.map(function(p){return getPaisVal(p);}));
+  if(maxVal<=0)maxVal=1;
+  var cs=d3.scaleSequential([0,maxVal],d3.interpolatePurples);
+  mapSvg.selectAll("path")
+    .attr("fill",function(d){
+      var p=paises.find(function(k){return PAIS_ISO[k]===String(d.id);});
+      if(!p)return"rgba(255,255,255,0.04)";
+      if(selCont&&PAIS_CONT[p]!==selCont)return"rgba(255,255,255,0.03)";
+      return cs(getPaisVal(p));
+    })
+    .attr("opacity",function(d){
+      var p=paises.find(function(k){return PAIS_ISO[k]===String(d.id);});
+      return(p&&selCont&&PAIS_CONT[p]!==selCont)?0.15:1;
+    });
+}
+function initMap(){
+  var W=document.getElementById("mapWrap").clientWidth||700;
+  var H=300;
+  mapSvg=d3.select("#mapWrap").append("svg").attr("viewBox","0 0 "+W+" "+H).attr("width","100%").style("background","#0a0d14");
+  var proj=d3.geoNaturalEarth1().scale(W/6.3).translate([W/2,H/2]);
+  var pathG=d3.geoPath(proj);
+  var tip=document.getElementById("mapTip");
+  d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(function(world){
+    worldFeatures=topojson.feature(world,world.objects.countries).features;
+    document.getElementById("mapLoad").style.display="none";
+    mapSvg.selectAll("path").data(worldFeatures).join("path")
+      .attr("d",pathG).attr("fill","rgba(255,255,255,0.04)").attr("stroke","rgba(255,255,255,0.08)").attr("stroke-width",0.4).style("cursor","pointer")
+      .on("mousemove",function(evt,d){
+        var p=Object.keys(PAIS_ISO).find(function(k){return PAIS_ISO[k]===String(d.id);});
+        if(!p)return;
+        tip.style.display="block";tip.style.left=(evt.clientX+12)+"px";tip.style.top=(evt.clientY-28)+"px";
+        tip.innerHTML=p+"<br>"+fmt(getPaisVal(p));
+      })
+      .on("mouseleave",function(){tip.style.display="none";})
+      .on("click",function(_,d){
+        var p=Object.keys(PAIS_ISO).find(function(k){return PAIS_ISO[k]===String(d.id);});
+        if(!p)return;
+        var c=PAIS_CONT[p];selCont=selCont===c?null:c;renderP2();
+      });
+    updateMap();
+  }).catch(function(){document.getElementById("mapLoad").textContent="Mapa no disponible";});
+}
+function refreshAll(){renderP1();renderP2();}
+initPie1();initHbar();initLine1();renderP1();
+initPie2();initTbar();initMap();renderP2();
+
+</script>
+</body>
+</html>
