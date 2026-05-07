@@ -76,8 +76,6 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
 .tip{position:fixed;background:#1a1f2e;border:1px solid rgba(99,122,255,.3);border-radius:4px;padding:7px 11px;font-size:12px;color:#fff;pointer-events:none;display:none;z-index:100;font-family:"IBM Plex Mono",monospace}
 .undo-btn{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#8b95a8;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:14px;font-family:sans-serif}
 .undo-btn:hover{border-color:#ef4444;color:#ef4444}
-.btn-lang{background:transparent;border:1px solid rgba(99,122,255,.4);border-radius:4px;color:#637aff;font-size:11px;padding:4px 10px;cursor:pointer;font-family:"IBM Plex Mono",monospace;transition:all .15s;font-weight:600}
-.btn-lang:hover{background:rgba(99,122,255,.15)}
 </style>
 </head>
 <body>
@@ -86,7 +84,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
     <div class="nav-logo"><h2>AWorks</h2><p id="t-subtitle">Sales Dashboard</p></div>
     <div class="nav-item active" onclick="switchPage('cats',this)">◎ <span id="t-nav-cats">Categorias</span></div>
     <div class="nav-item" onclick="switchPage('terr',this)">⊞ <span id="t-nav-terr">Territorios</span></div>
-    <div class="nav-footer">Adventure Works 2015-2017</div>
+    <div class="nav-footer"><span id="t-footer">Adventure Works 2015-2017</span></div>
   </div>
   <div class="main">
     <div class="topbar">
@@ -99,7 +97,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
         <label id="t-hasta">Hasta</label>
         <input type="date" id="dTo" value="2017-06-30" min="2015-01-01" max="2017-06-30">
         <button class="btn-reset" onclick="resetAll()">↺ <span id="t-reset">Reset todo</span></button>
-        <button class="btn-lang" id="langBtn" onclick="toggleLang()">EN</button><span class="dinfo" id="dInfo"><span id="t-months">30 meses</span></span>
+        <span class="dinfo" id="dInfo"><span id="t-dinfo">30 meses</span></span>
       </div>
     </div>
     <div class="content">
@@ -111,21 +109,21 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <div class="fbadge" id="fbSub"><span class="fbadge-label" id="flSub"></span><button class="fbadge-x" onclick="clearSub()">↺</button></div>
         </div>
         <div class="krow">
-          <div class="kcard"><div class="klabel" id="t-rev1">Facturacion</div><div class="kval" id="kf">-</div></div>
-          <div class="kcard"><div class="klabel" id="t-qty1">Articulos Vendidos</div><div class="kval" id="kq">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-krev1">Facturacion</div><div class="kval" id="kf">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-kqty1">Articulos Vendidos</div><div class="kval" id="kq">-</div></div>
         </div>
         <div class="cgrid">
 
           <!-- Pie categorias -->
           <div class="ccard">
             <div class="ccard-header">
-              <div class="ctitle">Ventas por Categoria</div>
+              <div class="ctitle" id="t-title-pie1">Ventas por Categoria</div>
               <div class="ccard-tools">
                 <div style="position:relative">
                   <button class="icon-btn" id="pieMetricBtn" onclick="toggleDD('ddPieMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddPieMetric">
-                    <div class="dd-item active" id="ddPieRev" onclick="setPieMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
-                    <div class="dd-item" id="ddPieQty" onclick="setPieMetric('qty')"># <span class="t-qty">Articulos</span></div>
+                    <div class="dd-item active" id="ddPieRev" onclick="setPieMetric('rev')">$ <span class='t-rev'>Facturacion</span></div>
+                    <div class="dd-item" id="ddPieQty" onclick="setPieMetric('qty')"># <span class='t-qty'>Articulos</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearCat1()" title="Deshacer filtro">↺</button>
@@ -143,16 +141,16 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
                 <div style="position:relative">
                   <button class="icon-btn" id="hbarMetricBtn" onclick="toggleDD('ddHbarMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddHbarMetric">
-                    <div class="dd-item active" id="ddHbarQty" onclick="setHbarMetric('qty')"># <span class="t-qty">Articulos</span></div>
-                    <div class="dd-item" id="ddHbarRev" onclick="setHbarMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
+                    <div class="dd-item active" id="ddHbarQty" onclick="setHbarMetric('qty')"># <span class='t-qty'>Articulos</span></div>
+                    <div class="dd-item" id="ddHbarRev" onclick="setHbarMetric('rev')">$ <span class='t-rev'>Facturacion</span></div>
                   </div>
                 </div>
                 <div style="position:relative">
                   <button class="icon-btn" id="hbarSortBtn" onclick="toggleDD('ddHbarSort',this)" title="Ordenar">⇅</button>
                   <div class="dropdown" id="ddHbarSort">
-                    <div class="dd-item active" id="ddSortQty" onclick="setHbarSort('qty')">9→1 <span class="t-sort-qty">Por articulos</span></div>
-                    <div class="dd-item" id="ddSortRev" onclick="setHbarSort('rev')">↓ <span class="t-sort-rev">Por facturacion</span></div>
-                    <div class="dd-item" id="ddSortAlpha" onclick="setHbarSort('alpha')">A→Z <span class="t-sort-alpha">Alfabetico</span></div>
+                    <div class="dd-item active" id="ddSortQty" onclick="setHbarSort('qty')">9→1 <span class='t-sort-qty'>Por articulos</span></div>
+                    <div class="dd-item" id="ddSortRev" onclick="setHbarSort('rev')">↓ <span class='t-sort-rev'>Por facturacion</span></div>
+                    <div class="dd-item" id="ddSortAlpha" onclick="setHbarSort('alpha')">A→Z <span class='t-sort-alpha'>Alfabetico</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearSub()" title="Deshacer filtro">↺</button>
@@ -190,21 +188,21 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <div class="fbadge" id="fbCat2"><span class="fbadge-label" id="flCat2"></span><button class="fbadge-x" onclick="clearCat2()">↺</button></div>
         </div>
         <div class="krow">
-          <div class="kcard"><div class="klabel" id="t-rev2">Facturacion</div><div class="kval" id="kft">-</div></div>
-          <div class="kcard"><div class="klabel" id="t-qty2">Articulos Vendidos</div><div class="kval" id="kqt">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-krev2">Facturacion</div><div class="kval" id="kft">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-kqty2">Articulos Vendidos</div><div class="kval" id="kqt">-</div></div>
         </div>
         <div class="cgrid">
 
           <!-- Pie territorios -->
           <div class="ccard">
             <div class="ccard-header">
-              <div class="ctitle">Ventas por Categoria</div>
+              <div class="ctitle" id="t-title-pie2">Ventas por Categoria</div>
               <div class="ccard-tools">
                 <div style="position:relative">
                   <button class="icon-btn" id="pie2MetricBtn" onclick="toggleDD('ddPie2Metric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddPie2Metric">
-                    <div class="dd-item active" id="ddPie2Rev" onclick="setPie2Metric('rev')">$ <span class="t-rev">Facturacion</span></div>
-                    <div class="dd-item" id="ddPie2Qty" onclick="setPie2Metric('qty')"># <span class="t-qty">Articulos</span></div>
+                    <div class="dd-item active" id="ddPie2Rev" onclick="setPie2Metric('rev')">$ <span class='t-rev'>Facturacion</span></div>
+                    <div class="dd-item" id="ddPie2Qty" onclick="setPie2Metric('qty')"># <span class='t-qty'>Articulos</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearCat2()" title="Deshacer filtro">↺</button>
@@ -222,8 +220,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
                 <div style="position:relative">
                   <button class="icon-btn" id="tbarMetricBtn" onclick="toggleDD('ddTbarMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddTbarMetric">
-                    <div class="dd-item active" id="ddTbarRev" onclick="setTbarMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
-                    <div class="dd-item" id="ddTbarQty" onclick="setTbarMetric('qty')"># <span class="t-qty">Articulos</span></div>
+                    <div class="dd-item active" id="ddTbarRev" onclick="setTbarMetric('rev')">$ <span class='t-rev'>Facturacion</span></div>
+                    <div class="dd-item" id="ddTbarQty" onclick="setTbarMetric('qty')"># <span class='t-qty'>Articulos</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearCont()" title="Deshacer filtro">↺</button>
@@ -241,8 +239,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
                 <div style="position:relative">
                   <button class="icon-btn" id="mapMetricBtn" onclick="toggleDD('ddMapMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddMapMetric">
-                    <div class="dd-item active" id="ddMapRev" onclick="setMapMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
-                    <div class="dd-item" id="ddMapQty" onclick="setMapMetric('qty')"># <span class="t-qty">Articulos</span></div>
+                    <div class="dd-item active" id="ddMapRev" onclick="setMapMetric('rev')">$ <span class='t-rev'>Facturacion</span></div>
+                    <div class="dd-item" id="ddMapQty" onclick="setMapMetric('qty')"># <span class='t-qty'>Articulos</span></div>
                   </div>
                 </div>
               </div>
@@ -253,7 +251,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
             <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
               <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace" id="mapLegLabel"><span id="t-map-leg">Facturacion</span>:</span>
               <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:linear-gradient(to right,#312e81,#7c3aed,#a78bfa)"></span>
-              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace" id="t-map-range">menor → mayor</span>
+              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace"><span id="t-map-range">menor → mayor</span></span>
             </div>
           </div>
 
@@ -292,6 +290,73 @@ var PAIS_F={"United States":[206026.14,96734.03,235980.0,241452.28,293029.27,268
 var PAIS_Q={"United States":[66,33,72,76,90,82,94,96,50,46,58,86,60,60,51,71,91,83,169,830,874,937,875,1870,3486,3459,3743,3769,4380,4166],"Canada":[15,44,10,19,13,20,22,31,11,14,8,16,8,7,15,7,18,4,21,277,415,442,316,814,1429,1138,1399,1524,1431,1406],"France":[10,11,16,13,17,14,21,20,27,22,15,43,22,26,32,35,33,52,89,202,255,237,239,609,779,916,940,1056,1018,1093],"Germany":[4,14,18,20,15,18,22,20,18,18,27,32,21,32,28,39,37,33,138,194,205,230,241,503,989,864,928,952,1156,1134],"United Kingdom":[21,15,11,10,7,11,23,35,29,27,25,41,34,34,36,30,39,32,96,293,335,228,377,590,1156,1020,1196,1220,1288,1435],"Australia":[68,48,71,66,64,67,65,76,61,96,58,108,97,108,104,108,111,108,207,499,447,496,592,1031,2029,2200,2165,2243,2250,2308]};
 var PAISCAT_F={"United States":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1739.39,9403.97,10387.72,11664.24,10664.33,23533.7,40330.59,39229.42,44335.85,42822.27,50813.48,45169.33],Bikes:[206026.14,96734.03,235980.0,241452.28,293029.27,268451.97,188222.64,183518.2,77217.88,72491.61,96885.6,139397.69,93660.81,89010.04,77774.6,104314.1,141953.58,129385.14,60630.28,202154.37,94475.42,121926.07,109881.11,245151.52,492815.73,535446.28,597236.42,605847.99,847396.04,818841.16],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,536.27,3490.84,3744.06,4666.46,5329.62,8311.34,16791.24,17981.93,18380.88,19882.09,20638.94,21843.45]},"Canada":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,219.42,3249.59,5060.84,6068.65,4339.61,10182.15,16681.86,12923.31,17102.64,18878.52,18604.72,16126.04],Bikes:[50413.32,153979.87,35579.42,67783.85,46135.95,65222.22,49209.21,67450.7,16998.3,25385.52,8895.46,23438.63,16287.41,13148.47,26129.58,11776.15,27691.61,5518.71,12132.59,33834.01,15629.9,18677.05,16942.28,60142.29,113685.34,76294.69,109502.41,121296.82,141364.56,153750.42],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,111.57,1858.26,1901.14,2257.49,1662.24,3840.93,7726.18,6402.38,6650.96,7873.58,7016.99,8210.01]},"France":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,896.29,2243.17,2845.21,2550.34,2603.13,6732.8,8908.59,10576.09,11320.71,11396.55,12213.29,11826.75],Bikes:[29667.8,30316.89,42068.34,40759.17,51786.51,35496.64,40241.52,41523.31,47871.57,42630.31,23663.64,77296.55,40474.58,40472.97,63888.39,58523.14,53984.65,88551.24,41331.65,66150.19,30494.1,27484.34,46309.92,96004.73,120089.59,171184.83,154434.96,195552.92,207628.72,242868.62],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,329.83,899.34,1664.33,1114.76,804.39,2702.3,3410.86,3317.27,3024.85,4215.65,3906.02,4388.98]},"Germany":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1216.01,2146.44,2543.57,2852.69,2770.94,6027.25,11074.74,9845.57,8987.31,10767.64,12279.46,12230.4],Bikes:[8376.46,44134.16,61123.13,50494.8,44476.69,55033.22,38931.43,33888.44,37259.38,30762.94,49903.39,49629.81,37579.88,63945.44,50172.22,70807.09,54492.53,63445.75,48376.81,56610.52,28749.75,47408.29,41404.12,103857.07,184578.81,163098.65,194075.98,204914.57,253763.47,244226.72],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,604.44,979.41,724.58,621.58,990.67,1786.2,3570.28,2999.39,3487.52,3165.93,3746.23,3740.21]},"United Kingdom":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,869.58,2870.07,3454.49,2609.62,4319.37,6473.06,12916.43,11474.3,13296.58,13831.79,13809.82,14818.87],Bikes:[71298.1,47177.59,36100.24,35376.14,21787.16,36125.24,41263.01,61086.73,49219.98,48982.1,44998.11,73618.67,61324.52,62965.84,60875.53,48584.68,65765.21,51946.22,35430.68,102399.81,57044.66,30649.3,63560.56,89467.27,194002.62,208675.02,248909.13,240467.66,259688.63,317460.83],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,288.53,1009.02,1163.92,775.51,1783.64,1679.02,5029.77,3749.9,4684.12,4830.18,4857.69,5715.61]},"Australia":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1644.01,5739.7,5079.39,5347.5,6601.93,10308.46,21758.49,24175.53,23846.52,24625.49,25041.3,25374.19],Bikes:[219530.84,159883.71,232584.98,217497.8,202110.31,209659.38,128247.19,148985.43,115495.77,184024.11,102264.95,200380.18,183098.54,204620.02,193121.55,200952.25,201647.16,194977.92,96914.68,147264.08,73295.97,74031.57,118365.82,240187.6,461815.87,492074.29,506205.81,552204.66,532580.04,566343.33],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,708.36,1288.93,2041.71,2407.36,2849.52,5782.93,10120.56,9211.72,11461.84,10152.43,10063.83,10458.72]}};
 var PAISCAT_Q={"United States":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,109,566,671,705,636,1415,2638,2514,2762,2731,3153,2911],Bikes:[66,33,72,76,90,82,94,96,50,46,58,86,60,60,51,71,91,83,40,142,68,89,80,177,337,363,403,409,565,549],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,122,135,143,159,278,511,582,578,629,662,706]},"Canada":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11,203,342,352,249,648,1109,904,1113,1201,1116,1050],Bikes:[15,44,10,19,13,20,22,31,11,14,8,16,8,7,15,7,18,4,8,22,10,13,12,40,74,46,66,86,94,105],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,52,63,77,55,126,246,188,220,237,221,251]},"France":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,54,133,183,173,177,456,582,677,711,773,722,778],Bikes:[10,11,16,13,17,14,21,20,27,22,15,43,22,26,32,35,33,52,23,41,25,20,30,61,84,110,108,127,149,160],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,28,47,44,32,92,113,129,121,156,147,155]},"Germany":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,88,127,152,177,177,379,723,638,639,663,809,786],Bikes:[4,14,18,20,15,18,22,20,18,18,27,32,21,32,28,39,37,33,32,36,22,29,25,68,118,108,135,151,182,170],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,31,31,24,39,56,148,118,154,138,165,178]},"United Kingdom":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,59,184,243,172,271,452,838,727,851,872,910,984],Bikes:[21,15,11,10,7,11,23,35,29,27,25,41,34,34,36,30,39,32,24,64,39,20,42,69,127,140,157,163,182,219],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,45,53,36,64,69,191,153,188,185,196,232]},"Australia":{Accessories:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,124,363,334,362,423,682,1389,1524,1492,1554,1535,1578],Bikes:[68,48,71,66,64,67,65,76,61,96,58,108,97,108,104,108,111,108,55,92,47,51,78,149,295,305,338,359,372,394],Clothing:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,28,44,66,83,91,200,345,371,335,330,343,336]}};
+
+
+// ---- TRANSLATIONS ----
+var T={
+  es:{
+    subtitle:"Sales Dashboard",
+    navCats:"Categorias",navTerr:"Territorios",
+    desde:"Desde",hasta:"Hasta",reset:"Reset todo",
+    rev:"Facturacion",qty:"Articulos",
+    krev1:"Facturacion",kqty1:"Articulos Vendidos",
+    krev2:"Facturacion",kqty2:"Articulos Vendidos",
+    titlePie1:"Ventas por Categoria",titleHbar:"Ventas por Subcategoria",
+    titleLine:"Evolucion de Ventas",titlePie2:"Ventas por Categoria",
+    titleTbar:"Facturacion por Continente",titleMap:"Mapa de Ventas por Pais",
+    sortQty:"Por articulos",sortRev:"Por facturacion",sortAlpha:"Alfabetico",
+    mapLeg:"Facturacion",mapRange:"menor \u2192 mayor",
+    mapLoading:"Cargando mapa...",mapUnavailable:"Mapa no disponible",
+    qtyLegend:"Cantidad",
+    drillAnual:"Anual",drillMensual:"Mensual",drillTrimestral:"Trimestral",
+    badgeCat:"CAT",badgeSub:"SUB",badgeCont:"CONT",
+    months:"meses",qtyLabel:"art.",revAxis:"Facturacion",qtyAxis:"Cantidad",
+    footer:"Adventure Works 2015-2017"
+  },
+  en:{
+    subtitle:"Sales Dashboard",
+    navCats:"Categories",navTerr:"Territories",
+    desde:"From",hasta:"To",reset:"Reset all",
+    rev:"Revenue",qty:"Items",
+    krev1:"Revenue",kqty1:"Items Sold",
+    krev2:"Revenue",kqty2:"Items Sold",
+    titlePie1:"Sales by Category",titleHbar:"Sales by Subcategory",
+    titleLine:"Sales Trend",titlePie2:"Sales by Category",
+    titleTbar:"Revenue by Continent",titleMap:"Sales Map by Country",
+    sortQty:"By items",sortRev:"By revenue",sortAlpha:"A to Z",
+    mapLeg:"Revenue",mapRange:"low \u2192 high",
+    mapLoading:"Loading map...",mapUnavailable:"Map unavailable",
+    qtyLegend:"Quantity",
+    drillAnual:"Yearly",drillMensual:"Monthly",drillTrimestral:"Quarterly",
+    badgeCat:"CAT",badgeSub:"SUB",badgeCont:"CONT",
+    months:"months",qtyLabel:"items",revAxis:"Revenue",qtyAxis:"Quantity",
+    footer:"Adventure Works 2015-2017"
+  }
+};
+var lang=(new URLSearchParams(window.location.search).get("lang")==="en")?"en":"es";
+
+function applyLang(){
+  var t=T[lang];
+  var s=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  var sa=function(cls,v){document.querySelectorAll("."+cls).forEach(function(e){e.textContent=v;});};
+  s("t-subtitle",t.subtitle);
+  s("t-nav-cats",t.navCats);s("t-nav-terr",t.navTerr);
+  s("t-footer",t.footer);
+  s("t-desde",t.desde);s("t-hasta",t.hasta);
+  s("t-reset",t.reset);
+  s("t-dinfo","30 "+t.months);
+  s("t-krev1",t.krev1);s("t-kqty1",t.kqty1);
+  s("t-krev2",t.krev2);s("t-kqty2",t.kqty2);
+  s("t-title-pie1",t.titlePie1);s("t-title-hbar",t.titleHbar);
+  s("t-title-line",t.titleLine);s("t-title-pie2",t.titlePie2);
+  s("t-title-tbar",t.titleTbar);s("t-title-map",t.titleMap);
+  s("t-sort-qty",t.sortQty);s("t-sort-rev",t.sortRev);s("t-sort-alpha",t.sortAlpha);
+  s("t-map-leg",t.mapLeg);s("t-map-range",t.mapRange);
+  s("t-map-loading",t.mapLoading);
+  s("t-qty-legend",t.qtyLegend);
+  sa("t-rev",t.rev);sa("t-qty",t.qty);
+  document.title="Adventure Works — "+(lang==="es"?"Dashboard":"Dashboard");
+}
 
 // ---- ESTADO ----
 var fi=0, ti=29;
@@ -423,7 +488,7 @@ function setTbarMetric(m){
 function setMapMetric(m){
   mapMetric=m;
   setDDActive("ddMapMetric",m==="rev"?"ddMapRev":"ddMapQty");
-  document.getElementById("mapLegLabel").textContent=m==="rev"?"Facturacion:":"Articulos:";
+  document.getElementById("mapLegLabel").innerHTML=(m==="rev"?T[lang].rev:T[lang].qty)+":";
   updateMap();
 }
 
@@ -487,7 +552,9 @@ function updateDrillUI(){
 // ---- BADGE HELPER ----
 function badge(id,labelId,val,prefix){
   var el=document.getElementById(id);
-  if(val){el.classList.add("on");document.getElementById(labelId).textContent=(prefix?prefix+": ":"")+val;}
+  var prefixMap={"CAT":T[lang].badgeCat,"SUB":T[lang].badgeSub,"CONT":T[lang].badgeCont};
+  var lp=prefixMap[prefix]||prefix||"";
+  if(val){el.classList.add("on");document.getElementById(labelId).textContent=(lp?lp+": ":"")+val;}
   else el.classList.remove("on");
 }
 
@@ -728,7 +795,7 @@ function initMap(){
         if(!p)return;
         var v=getPaisVal(p);
         tip.style.display="block";tip.style.left=(evt.clientX+12)+"px";tip.style.top=(evt.clientY-28)+"px";
-        tip.innerHTML=getMapTipText(p);
+        tip.innerHTML=p+"<br>"+(mapMetric==="rev"?fmt(v):v.toLocaleString()+" "+T[lang].qtyLabel);
       })
       .on("mouseleave",function(){tip.style.display="none";})
       .on("click",function(_,d){
@@ -742,210 +809,10 @@ function initMap(){
 
 function refreshAll(){renderP1();renderP2();}
 
-// ---- TRANSLATIONS ----
-var T = {
-  es: {
-    subtitle: "Sales Dashboard",
-    navCats: "Categorias",
-    navTerr: "Territorios",
-    desde: "Desde",
-    hasta: "Hasta",
-    reset: "Reset todo",
-    rev: "Facturacion",
-    qty: "Articulos",
-    rev1: "Facturacion",
-    qty1: "Articulos Vendidos",
-    rev2: "Facturacion",
-    qty2: "Articulos Vendidos",
-    titlePie1: "Ventas por Categoria",
-    titleHbar: "Ventas por Subcategoria",
-    titleLine: "Evolucion de Ventas",
-    titlePie2: "Ventas por Categoria",
-    titleTbar: "Facturacion por Continente",
-    titleMap: "Mapa de Ventas por Pais",
-    sortQty: "Por articulos",
-    sortRev: "Por facturacion",
-    sortAlpha: "Alfabetico",
-    mapLeg: "Facturacion",
-    mapRange: "menor \u2192 mayor",
-    mapLoading: "Cargando mapa...",
-    qtyLegend: "Cantidad",
-    drillAnual: "Anual",
-    drillMensual: "Mensual",
-    drillTrimestral: "Trimestral",
-    badgeCat: "CAT",
-    badgeSub: "SUB",
-    badgeCont: "CONT",
-    months: "meses",
-    revLabel: "Facturacion",
-    qtyLabel: "art.",
-    revAxis: "Facturacion",
-    qtyAxis: "Cantidad",
-    mapUnavailable: "Mapa no disponible"
-  },
-  en: {
-    subtitle: "Sales Dashboard",
-    navCats: "Categories",
-    navTerr: "Territories",
-    desde: "From",
-    hasta: "To",
-    reset: "Reset all",
-    rev: "Revenue",
-    qty: "Items",
-    rev1: "Revenue",
-    qty1: "Items Sold",
-    rev2: "Revenue",
-    qty2: "Items Sold",
-    titlePie1: "Sales by Category",
-    titleHbar: "Sales by Subcategory",
-    titleLine: "Sales Trend",
-    titlePie2: "Sales by Category",
-    titleTbar: "Revenue by Continent",
-    titleMap: "Sales Map by Country",
-    sortQty: "By items",
-    sortRev: "By revenue",
-    sortAlpha: "A to Z",
-    mapLeg: "Revenue",
-    mapRange: "low \u2192 high",
-    mapLoading: "Loading map...",
-    qtyLegend: "Quantity",
-    drillAnual: "Yearly",
-    drillMensual: "Monthly",
-    drillTrimestral: "Quarterly",
-    badgeCat: "CAT",
-    badgeSub: "SUB",
-    badgeCont: "CONT",
-    months: "months",
-    revLabel: "Revenue",
-    qtyLabel: "items",
-    revAxis: "Revenue",
-    qtyAxis: "Quantity",
-    mapUnavailable: "Map unavailable"
-  }
-};
-
-var DRILL_LABELS_LANG = {
-  anual: function(){return T[lang].drillAnual;},
-  mensual: function(){return T[lang].drillMensual;},
-  trimestral: function(){return T[lang].drillTrimestral;}
-};
-
-var lang = "es";
-
-function getLang(){
-  var params = new URLSearchParams(window.location.search);
-  var l = params.get("lang");
-  return (l === "en") ? "en" : "es";
-}
-
-function toggleLang(){
-  var newLang = lang === "es" ? "en" : "es";
-  var url = new URL(window.location.href);
-  url.searchParams.set("lang", newLang);
-  window.location.href = url.toString();
-}
-
-function applyLang(){
-  var t = T[lang];
-  var setText = function(id, val){ var el=document.getElementById(id); if(el)el.textContent=val; };
-  var setAll = function(cls, val){ document.querySelectorAll("."+cls).forEach(function(el){el.textContent=val;}); };
-
-  setText("t-subtitle", t.subtitle);
-  setText("t-nav-cats", t.navCats);
-  setText("t-nav-terr", t.navTerr);
-  setText("t-desde", t.desde);
-  setText("t-hasta", t.hasta);
-  setText("t-reset", t.reset);
-  setText("t-rev1", t.rev1);
-  setText("t-qty1", t.qty1);
-  setText("t-rev2", t.rev2);
-  setText("t-qty2", t.qty2);
-  setText("t-title-pie1", t.titlePie1);
-  setText("t-title-hbar", t.titleHbar);
-  setText("t-title-line", t.titleLine);
-  setText("t-title-pie2", t.titlePie2);
-  setText("t-title-tbar", t.titleTbar);
-  setText("t-title-map", t.titleMap);
-  setText("t-sort-qty", t.sortQty);
-  setText("t-sort-rev", t.sortRev);
-  setText("t-sort-alpha", t.sortAlpha);
-  setText("t-map-leg", t.mapLeg);
-  setText("t-map-range", t.mapRange);
-  setText("t-map-loading", t.mapLoading);
-  setText("t-qty-legend", t.qtyLegend);
-  setAll("t-rev", t.rev);
-  setAll("t-qty", t.qty);
-  setText("t-months", (ti - fi + 1) + " " + t.months);
-
-  // lang button shows opposite
-  var btn = document.getElementById("langBtn");
-  if(btn) btn.textContent = lang === "es" ? "EN" : "ES";
-
-  // update drill label
-  updateDrillUI();
-}
-
-// Patch updateDrillUI to use lang
-var _origDrillUI = updateDrillUI;
-updateDrillUI = function(){
-  var idx = DRILL_LEVELS.indexOf(drillLevel);
-  var labels = {"anual": T[lang].drillAnual, "mensual": T[lang].drillMensual, "trimestral": T[lang].drillTrimestral};
-  document.getElementById("drillLabel").textContent = labels[drillLevel] || drillLevel;
-  document.getElementById("drillUp").disabled = (idx === 0);
-  document.getElementById("drillDown").disabled = (idx === DRILL_LEVELS.length - 1);
-};
-
-// Patch fmt-related display strings used in JS (tooltips, axes, map)
-// These are handled inline via T[lang] references added to key functions
-
-// Patch badge() to use T[lang] for prefixes
-var _origBadge = badge;
-badge = function(id, labelId, val, prefix){
-  var el = document.getElementById(id);
-  var t = T[lang];
-  var prefixMap = {"CAT": t.badgeCat, "SUB": t.badgeSub, "CONT": t.badgeCont};
-  var localizedPrefix = prefixMap[prefix] || prefix;
-  if(val){ el.classList.add("on"); document.getElementById(labelId).textContent = (localizedPrefix ? localizedPrefix + ": " : "") + val; }
-  else el.classList.remove("on");
-};
-
-// Patch tooltip labels to use lang
-// We'll update chart tooltips after lang is set
-function patchChartTooltips(){
-  if(hbarc){
-    hbarc.options.plugins.tooltip.callbacks.label = function(ctx){
-      var v = ctx.parsed.x;
-      return hbarMetric === "qty" ? v.toLocaleString() + " " + T[lang].qtyLabel : fmt(v);
-    };
-    hbarc.update();
-  }
-  if(tbarc){
-    tbarc.options.plugins.tooltip.callbacks.label = function(ctx){
-      return tbarMetric === "rev" ? fmt(ctx.parsed.y) : ctx.parsed.y.toLocaleString() + " " + T[lang].qtyLabel;
-    };
-    tbarc.update();
-  }
-  if(line1c){
-    line1c.options.scales.y.title.text = T[lang].revAxis;
-    line1c.options.scales.y2.title.text = T[lang].qtyAxis;
-    line1c.update();
-  }
-}
-
-// Patch map tooltip
-function getMapTipText(p){
-  var v = getPaisVal(p);
-  return p + "<br>" + (mapMetric === "rev" ? fmt(v) : v.toLocaleString() + " " + T[lang].qtyLabel);
-}
-
 // ---- INIT ----
 buildLeg1(); initPie1(); initHbar(); initLine1(); renderP1();
 buildLeg2Cont(); buildLeg2Cat(); initPie2(); initTbar(); initMap(); renderP2();
-
-// ---- LANG INIT ----
-lang = getLang();
 applyLang();
-patchChartTooltips();
 
 </script>
 </body>
