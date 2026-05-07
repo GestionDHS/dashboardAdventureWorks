@@ -76,14 +76,16 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
 .tip{position:fixed;background:#1a1f2e;border:1px solid rgba(99,122,255,.3);border-radius:4px;padding:7px 11px;font-size:12px;color:#fff;pointer-events:none;display:none;z-index:100;font-family:"IBM Plex Mono",monospace}
 .undo-btn{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#8b95a8;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:14px;font-family:sans-serif}
 .undo-btn:hover{border-color:#ef4444;color:#ef4444}
+.btn-lang{background:transparent;border:1px solid rgba(99,122,255,.4);border-radius:4px;color:#637aff;font-size:11px;padding:4px 10px;cursor:pointer;font-family:"IBM Plex Mono",monospace;transition:all .15s;font-weight:600}
+.btn-lang:hover{background:rgba(99,122,255,.15)}
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="nav">
-    <div class="nav-logo"><h2>AWorks</h2><p>Sales Dashboard</p></div>
-    <div class="nav-item active" onclick="switchPage('cats',this)">◎ Categorias</div>
-    <div class="nav-item" onclick="switchPage('terr',this)">⊞ Territorios</div>
+    <div class="nav-logo"><h2>AWorks</h2><p id="t-subtitle">Sales Dashboard</p></div>
+    <div class="nav-item active" onclick="switchPage('cats',this)">◎ <span id="t-nav-cats">Categorias</span></div>
+    <div class="nav-item" onclick="switchPage('terr',this)">⊞ <span id="t-nav-terr">Territorios</span></div>
     <div class="nav-footer">Adventure Works 2015-2017</div>
   </div>
   <div class="main">
@@ -91,13 +93,13 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
       <div class="topbar-title">ADVENTURE WORKS</div>
       <div class="datebar">
         📅
-        <label>Desde</label>
+        <label id="t-desde">Desde</label>
         <input type="date" id="dFrom" value="2015-01-01" min="2015-01-01" max="2017-06-30">
         <span class="dsep">→</span>
-        <label>Hasta</label>
+        <label id="t-hasta">Hasta</label>
         <input type="date" id="dTo" value="2017-06-30" min="2015-01-01" max="2017-06-30">
-        <button class="btn-reset" onclick="resetAll()">↺ Reset todo</button>
-        <span class="dinfo" id="dInfo">30 meses</span>
+        <button class="btn-reset" onclick="resetAll()">↺ <span id="t-reset">Reset todo</span></button>
+        <button class="btn-lang" id="langBtn" onclick="toggleLang()">EN</button><span class="dinfo" id="dInfo"><span id="t-months">30 meses</span></span>
       </div>
     </div>
     <div class="content">
@@ -109,8 +111,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <div class="fbadge" id="fbSub"><span class="fbadge-label" id="flSub"></span><button class="fbadge-x" onclick="clearSub()">↺</button></div>
         </div>
         <div class="krow">
-          <div class="kcard"><div class="klabel">Facturacion</div><div class="kval" id="kf">-</div></div>
-          <div class="kcard"><div class="klabel">Articulos Vendidos</div><div class="kval" id="kq">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-rev1">Facturacion</div><div class="kval" id="kf">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-qty1">Articulos Vendidos</div><div class="kval" id="kq">-</div></div>
         </div>
         <div class="cgrid">
 
@@ -122,8 +124,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
                 <div style="position:relative">
                   <button class="icon-btn" id="pieMetricBtn" onclick="toggleDD('ddPieMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddPieMetric">
-                    <div class="dd-item active" id="ddPieRev" onclick="setPieMetric('rev')">$Facturacion</div>
-                    <div class="dd-item" id="ddPieQty" onclick="setPieMetric('qty')">#Articulos</div>
+                    <div class="dd-item active" id="ddPieRev" onclick="setPieMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
+                    <div class="dd-item" id="ddPieQty" onclick="setPieMetric('qty')"># <span class="t-qty">Articulos</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearCat1()" title="Deshacer filtro">↺</button>
@@ -136,21 +138,21 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <!-- Hbar subcategorias -->
           <div class="ccard">
             <div class="ccard-header">
-              <div class="ctitle">Ventas por Subcategoria</div>
+              <div class="ctitle" id="t-title-hbar">Ventas por Subcategoria</div>
               <div class="ccard-tools">
                 <div style="position:relative">
                   <button class="icon-btn" id="hbarMetricBtn" onclick="toggleDD('ddHbarMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddHbarMetric">
-                    <div class="dd-item active" id="ddHbarQty" onclick="setHbarMetric('qty')">#Articulos</div>
-                    <div class="dd-item" id="ddHbarRev" onclick="setHbarMetric('rev')">$Facturacion</div>
+                    <div class="dd-item active" id="ddHbarQty" onclick="setHbarMetric('qty')"># <span class="t-qty">Articulos</span></div>
+                    <div class="dd-item" id="ddHbarRev" onclick="setHbarMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
                   </div>
                 </div>
                 <div style="position:relative">
                   <button class="icon-btn" id="hbarSortBtn" onclick="toggleDD('ddHbarSort',this)" title="Ordenar">⇅</button>
                   <div class="dropdown" id="ddHbarSort">
-                    <div class="dd-item active" id="ddSortQty" onclick="setHbarSort('qty')">9→1Por articulos</div>
-                    <div class="dd-item" id="ddSortRev" onclick="setHbarSort('rev')">↓Por facturacion</div>
-                    <div class="dd-item" id="ddSortAlpha" onclick="setHbarSort('alpha')">A→ZAlfabetico</div>
+                    <div class="dd-item active" id="ddSortQty" onclick="setHbarSort('qty')">9→1 <span class="t-sort-qty">Por articulos</span></div>
+                    <div class="dd-item" id="ddSortRev" onclick="setHbarSort('rev')">↓ <span class="t-sort-rev">Por facturacion</span></div>
+                    <div class="dd-item" id="ddSortAlpha" onclick="setHbarSort('alpha')">A→Z <span class="t-sort-alpha">Alfabetico</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearSub()" title="Deshacer filtro">↺</button>
@@ -162,7 +164,7 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <!-- Line chart drill -->
           <div class="ccard wide">
             <div class="ccard-header">
-              <div class="ctitle" id="lineTitle">Evolucion de Ventas</div>
+              <div class="ctitle" id="t-title-line">Evolucion de Ventas</div>
               <div class="ccard-tools">
                 <span class="drill-label" id="drillLabel">Mensual</span>
                 <div class="drill-ctrls">
@@ -172,8 +174,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
               </div>
             </div>
             <div class="leg">
-              <span class="li"><span style="display:inline-block;width:18px;height:2px;background:#9e9e9e;vertical-align:middle;margin-right:2px"></span>Facturacion</span>
-              <span class="li"><span style="display:inline-block;width:10px;height:10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);margin-right:2px"></span>Cantidad</span>
+              <span class="li"><span style="display:inline-block;width:18px;height:2px;background:#9e9e9e;vertical-align:middle;margin-right:2px"></span><span class="t-rev">Facturacion</span></span>
+              <span class="li"><span style="display:inline-block;width:10px;height:10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);margin-right:2px"></span><span id="t-qty-legend">Cantidad</span></span>
             </div>
             <div style="position:relative;height:200px"><canvas id="line1"></canvas></div>
           </div>
@@ -188,8 +190,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <div class="fbadge" id="fbCat2"><span class="fbadge-label" id="flCat2"></span><button class="fbadge-x" onclick="clearCat2()">↺</button></div>
         </div>
         <div class="krow">
-          <div class="kcard"><div class="klabel">Facturacion</div><div class="kval" id="kft">-</div></div>
-          <div class="kcard"><div class="klabel">Articulos Vendidos</div><div class="kval" id="kqt">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-rev2">Facturacion</div><div class="kval" id="kft">-</div></div>
+          <div class="kcard"><div class="klabel" id="t-qty2">Articulos Vendidos</div><div class="kval" id="kqt">-</div></div>
         </div>
         <div class="cgrid">
 
@@ -201,8 +203,8 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
                 <div style="position:relative">
                   <button class="icon-btn" id="pie2MetricBtn" onclick="toggleDD('ddPie2Metric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddPie2Metric">
-                    <div class="dd-item active" id="ddPie2Rev" onclick="setPie2Metric('rev')">$Facturacion</div>
-                    <div class="dd-item" id="ddPie2Qty" onclick="setPie2Metric('qty')">#Articulos</div>
+                    <div class="dd-item active" id="ddPie2Rev" onclick="setPie2Metric('rev')">$ <span class="t-rev">Facturacion</span></div>
+                    <div class="dd-item" id="ddPie2Qty" onclick="setPie2Metric('qty')"># <span class="t-qty">Articulos</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearCat2()" title="Deshacer filtro">↺</button>
@@ -215,13 +217,13 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <!-- Barras continente -->
           <div class="ccard">
             <div class="ccard-header">
-              <div class="ctitle">Facturacion por Continente</div>
+              <div class="ctitle" id="t-title-tbar">Facturacion por Continente</div>
               <div class="ccard-tools">
                 <div style="position:relative">
                   <button class="icon-btn" id="tbarMetricBtn" onclick="toggleDD('ddTbarMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddTbarMetric">
-                    <div class="dd-item active" id="ddTbarRev" onclick="setTbarMetric('rev')">$Facturacion</div>
-                    <div class="dd-item" id="ddTbarQty" onclick="setTbarMetric('qty')">#Articulos</div>
+                    <div class="dd-item active" id="ddTbarRev" onclick="setTbarMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
+                    <div class="dd-item" id="ddTbarQty" onclick="setTbarMetric('qty')"># <span class="t-qty">Articulos</span></div>
                   </div>
                 </div>
                 <button class="undo-btn" onclick="clearCont()" title="Deshacer filtro">↺</button>
@@ -234,24 +236,24 @@ body{font-family:"IBM Plex Sans",sans-serif;background:#0f1117;color:#c8d0db;min
           <!-- Mapa -->
           <div class="ccard wide">
             <div class="ccard-header">
-              <div class="ctitle">Mapa de Ventas por Pais</div>
+              <div class="ctitle" id="t-title-map">Mapa de Ventas por Pais</div>
               <div class="ccard-tools">
                 <div style="position:relative">
                   <button class="icon-btn" id="mapMetricBtn" onclick="toggleDD('ddMapMetric',this)" title="Metrica">≡</button>
                   <div class="dropdown" id="ddMapMetric">
-                    <div class="dd-item active" id="ddMapRev" onclick="setMapMetric('rev')">$Facturacion</div>
-                    <div class="dd-item" id="ddMapQty" onclick="setMapMetric('qty')">#Articulos</div>
+                    <div class="dd-item active" id="ddMapRev" onclick="setMapMetric('rev')">$ <span class="t-rev">Facturacion</span></div>
+                    <div class="dd-item" id="ddMapQty" onclick="setMapMetric('qty')"># <span class="t-qty">Articulos</span></div>
                   </div>
                 </div>
               </div>
             </div>
             <div id="mapWrap" style="width:100%;height:280px;border-radius:4px;overflow:hidden;background:#0a0d14;position:relative;">
-              <div id="mapLoad" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a5568;font-size:13px;font-family:IBM Plex Mono,monospace">Cargando mapa...</div>
+              <div id="mapLoad" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a5568;font-size:13px;font-family:IBM Plex Mono,monospace" id="t-map-loading">Cargando mapa...</div>
             </div>
             <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
-              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace" id="mapLegLabel">Facturacion:</span>
+              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace" id="mapLegLabel"><span id="t-map-leg">Facturacion</span>:</span>
               <span style="display:inline-block;width:80px;height:6px;border-radius:3px;background:linear-gradient(to right,#312e81,#7c3aed,#a78bfa)"></span>
-              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace">menor → mayor</span>
+              <span style="font-size:11px;color:#4a5568;font-family:IBM Plex Mono,monospace" id="t-map-range">menor → mayor</span>
             </div>
           </div>
 
@@ -365,7 +367,7 @@ function applyDates(){
   var b=ymToIdx(document.getElementById("dTo").value);
   if(a<0)a=0;if(b<0)b=29;if(a>b){a=0;b=29;}
   fi=a;ti=b;
-  document.getElementById("dInfo").textContent=(b-a+1)+" meses";
+  document.getElementById("dInfo").textContent=(b-a+1)+" "+T[lang].months;
   refreshAll();
 }
 document.getElementById("dFrom").addEventListener("change",applyDates);
@@ -375,7 +377,7 @@ function resetAll(){
   document.getElementById("dFrom").value="2015-01-01";
   document.getElementById("dTo").value="2017-06-30";
   fi=0;ti=29;
-  document.getElementById("dInfo").textContent="30 meses";
+  document.getElementById("dInfo").textContent="30 "+T[lang].months;
   selCat1=null;selSub=null;selCont=null;selCat2=null;
   drillLevel="mensual";
   pieMetric="rev"; hbarMetric="qty"; hbarSort="qty";
@@ -558,7 +560,7 @@ function initHbar(){
         if(selSub){var f=SC.find(function(s){return s.name===selSub;});if(f&&selCat1&&f.cat!==selCat1)selCat1=null;}
         renderP1();
       },
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var v=ctx.parsed.x;return hbarMetric==="qty"?v.toLocaleString("es-AR")+" art.":fmt(v);}}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var v=ctx.parsed.x;return hbarMetric==="qty"?v.toLocaleString()+" "+T[lang].qtyLabel:fmt(v);}}}},
       scales:{
         x:{ticks:{color:"#4a5568",font:{size:10},callback:function(v){return hbarMetric==="qty"?(v>=1000?(v/1000).toFixed(0)+"K":v):fmt(v);}},grid:{color:"rgba(255,255,255,.04)"}},
         y:{ticks:{color:"#8b95a8",font:{size:10}},grid:{display:false}}
@@ -590,8 +592,8 @@ function initLine1(){
       plugins:{legend:{display:false}},
       scales:{
         x:{ticks:{color:"#4a5568",font:{size:9},maxRotation:drillLevel==="mensual"?45:0,autoSkip:false},grid:{color:"rgba(255,255,255,.04)"}},
-        y:{position:"left",ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1e6?(v/1e6).toFixed(1)+"M":(v/1e3).toFixed(0)+"K";}},grid:{color:"rgba(255,255,255,.04)"},title:{display:true,text:"Facturacion",color:"#4a5568",font:{size:10}}},
-        y2:{position:"right",ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1000?(v/1000).toFixed(0)+"K":v;}},grid:{display:false},title:{display:true,text:"Cantidad",color:"#4a5568",font:{size:10}}}
+        y:{position:"left",ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1e6?(v/1e6).toFixed(1)+"M":(v/1e3).toFixed(0)+"K";}},grid:{color:"rgba(255,255,255,.04)"},title:{display:true,text:T[lang].revAxis,color:"#4a5568",font:{size:10}}},
+        y2:{position:"right",ticks:{color:"#4a5568",font:{size:10},callback:function(v){return v>=1000?(v/1000).toFixed(0)+"K":v;}},grid:{display:false},title:{display:true,text:T[lang].qtyAxis,color:"#4a5568",font:{size:10}}}
       }
     }
   });
@@ -675,7 +677,7 @@ function initTbar(){
     data:{labels:CONTS,datasets:[{data:CONTS.map(function(c){return getContVal(c);}),backgroundColor:CONTS.map(function(c){return CONT_C[c];}),borderWidth:0,borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},
       onClick:function(_,els){var c=els.length?CONTS[els[0].index]:null;selCont=selCont===c?null:c;renderP2();},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return tbarMetric==="rev"?fmt(ctx.parsed.y):ctx.parsed.y.toLocaleString("es-AR")+" art.";},title:function(items){return items[0].label;}}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return tbarMetric==="rev"?fmt(ctx.parsed.y):ctx.parsed.y.toLocaleString()+" "+T[lang].qtyLabel;},title:function(items){return items[0].label;}}}},
       scales:{
         x:{ticks:{color:"#8b95a8",font:{size:11}},grid:{display:false}},
         y:{ticks:{color:"#4a5568",font:{size:10},callback:function(v){return tbarMetric==="rev"?fmt(v):fmtQ(v);}},grid:{color:"rgba(255,255,255,.04)"}}
@@ -726,7 +728,7 @@ function initMap(){
         if(!p)return;
         var v=getPaisVal(p);
         tip.style.display="block";tip.style.left=(evt.clientX+12)+"px";tip.style.top=(evt.clientY-28)+"px";
-        tip.innerHTML=p+"<br>"+(mapMetric==="rev"?fmt(v):v.toLocaleString("es-AR")+" art.");
+        tip.innerHTML=getMapTipText(p);
       })
       .on("mouseleave",function(){tip.style.display="none";})
       .on("click",function(_,d){
@@ -735,14 +737,215 @@ function initMap(){
         selCont=selCont===PAIS_CONT[p]?null:PAIS_CONT[p];renderP2();
       });
     updateMap();
-  }).catch(function(){document.getElementById("mapLoad").textContent="Mapa no disponible";});
+  }).catch(function(){document.getElementById("mapLoad").textContent=T[lang].mapUnavailable;});
 }
 
 function refreshAll(){renderP1();renderP2();}
 
+// ---- TRANSLATIONS ----
+var T = {
+  es: {
+    subtitle: "Sales Dashboard",
+    navCats: "Categorias",
+    navTerr: "Territorios",
+    desde: "Desde",
+    hasta: "Hasta",
+    reset: "Reset todo",
+    rev: "Facturacion",
+    qty: "Articulos",
+    rev1: "Facturacion",
+    qty1: "Articulos Vendidos",
+    rev2: "Facturacion",
+    qty2: "Articulos Vendidos",
+    titlePie1: "Ventas por Categoria",
+    titleHbar: "Ventas por Subcategoria",
+    titleLine: "Evolucion de Ventas",
+    titlePie2: "Ventas por Categoria",
+    titleTbar: "Facturacion por Continente",
+    titleMap: "Mapa de Ventas por Pais",
+    sortQty: "Por articulos",
+    sortRev: "Por facturacion",
+    sortAlpha: "Alfabetico",
+    mapLeg: "Facturacion",
+    mapRange: "menor \u2192 mayor",
+    mapLoading: "Cargando mapa...",
+    qtyLegend: "Cantidad",
+    drillAnual: "Anual",
+    drillMensual: "Mensual",
+    drillTrimestral: "Trimestral",
+    badgeCat: "CAT",
+    badgeSub: "SUB",
+    badgeCont: "CONT",
+    months: "meses",
+    revLabel: "Facturacion",
+    qtyLabel: "art.",
+    revAxis: "Facturacion",
+    qtyAxis: "Cantidad",
+    mapUnavailable: "Mapa no disponible"
+  },
+  en: {
+    subtitle: "Sales Dashboard",
+    navCats: "Categories",
+    navTerr: "Territories",
+    desde: "From",
+    hasta: "To",
+    reset: "Reset all",
+    rev: "Revenue",
+    qty: "Items",
+    rev1: "Revenue",
+    qty1: "Items Sold",
+    rev2: "Revenue",
+    qty2: "Items Sold",
+    titlePie1: "Sales by Category",
+    titleHbar: "Sales by Subcategory",
+    titleLine: "Sales Trend",
+    titlePie2: "Sales by Category",
+    titleTbar: "Revenue by Continent",
+    titleMap: "Sales Map by Country",
+    sortQty: "By items",
+    sortRev: "By revenue",
+    sortAlpha: "A to Z",
+    mapLeg: "Revenue",
+    mapRange: "low \u2192 high",
+    mapLoading: "Loading map...",
+    qtyLegend: "Quantity",
+    drillAnual: "Yearly",
+    drillMensual: "Monthly",
+    drillTrimestral: "Quarterly",
+    badgeCat: "CAT",
+    badgeSub: "SUB",
+    badgeCont: "CONT",
+    months: "months",
+    revLabel: "Revenue",
+    qtyLabel: "items",
+    revAxis: "Revenue",
+    qtyAxis: "Quantity",
+    mapUnavailable: "Map unavailable"
+  }
+};
+
+var DRILL_LABELS_LANG = {
+  anual: function(){return T[lang].drillAnual;},
+  mensual: function(){return T[lang].drillMensual;},
+  trimestral: function(){return T[lang].drillTrimestral;}
+};
+
+var lang = "es";
+
+function getLang(){
+  var params = new URLSearchParams(window.location.search);
+  var l = params.get("lang");
+  return (l === "en") ? "en" : "es";
+}
+
+function toggleLang(){
+  var newLang = lang === "es" ? "en" : "es";
+  var url = new URL(window.location.href);
+  url.searchParams.set("lang", newLang);
+  window.location.href = url.toString();
+}
+
+function applyLang(){
+  var t = T[lang];
+  var setText = function(id, val){ var el=document.getElementById(id); if(el)el.textContent=val; };
+  var setAll = function(cls, val){ document.querySelectorAll("."+cls).forEach(function(el){el.textContent=val;}); };
+
+  setText("t-subtitle", t.subtitle);
+  setText("t-nav-cats", t.navCats);
+  setText("t-nav-terr", t.navTerr);
+  setText("t-desde", t.desde);
+  setText("t-hasta", t.hasta);
+  setText("t-reset", t.reset);
+  setText("t-rev1", t.rev1);
+  setText("t-qty1", t.qty1);
+  setText("t-rev2", t.rev2);
+  setText("t-qty2", t.qty2);
+  setText("t-title-pie1", t.titlePie1);
+  setText("t-title-hbar", t.titleHbar);
+  setText("t-title-line", t.titleLine);
+  setText("t-title-pie2", t.titlePie2);
+  setText("t-title-tbar", t.titleTbar);
+  setText("t-title-map", t.titleMap);
+  setText("t-sort-qty", t.sortQty);
+  setText("t-sort-rev", t.sortRev);
+  setText("t-sort-alpha", t.sortAlpha);
+  setText("t-map-leg", t.mapLeg);
+  setText("t-map-range", t.mapRange);
+  setText("t-map-loading", t.mapLoading);
+  setText("t-qty-legend", t.qtyLegend);
+  setAll("t-rev", t.rev);
+  setAll("t-qty", t.qty);
+  setText("t-months", (ti - fi + 1) + " " + t.months);
+
+  // lang button shows opposite
+  var btn = document.getElementById("langBtn");
+  if(btn) btn.textContent = lang === "es" ? "EN" : "ES";
+
+  // update drill label
+  updateDrillUI();
+}
+
+// Patch updateDrillUI to use lang
+var _origDrillUI = updateDrillUI;
+updateDrillUI = function(){
+  var idx = DRILL_LEVELS.indexOf(drillLevel);
+  var labels = {"anual": T[lang].drillAnual, "mensual": T[lang].drillMensual, "trimestral": T[lang].drillTrimestral};
+  document.getElementById("drillLabel").textContent = labels[drillLevel] || drillLevel;
+  document.getElementById("drillUp").disabled = (idx === 0);
+  document.getElementById("drillDown").disabled = (idx === DRILL_LEVELS.length - 1);
+};
+
+// Patch fmt-related display strings used in JS (tooltips, axes, map)
+// These are handled inline via T[lang] references added to key functions
+
+// Patch badge() to use T[lang] for prefixes
+var _origBadge = badge;
+badge = function(id, labelId, val, prefix){
+  var el = document.getElementById(id);
+  var t = T[lang];
+  var prefixMap = {"CAT": t.badgeCat, "SUB": t.badgeSub, "CONT": t.badgeCont};
+  var localizedPrefix = prefixMap[prefix] || prefix;
+  if(val){ el.classList.add("on"); document.getElementById(labelId).textContent = (localizedPrefix ? localizedPrefix + ": " : "") + val; }
+  else el.classList.remove("on");
+};
+
+// Patch tooltip labels to use lang
+// We'll update chart tooltips after lang is set
+function patchChartTooltips(){
+  if(hbarc){
+    hbarc.options.plugins.tooltip.callbacks.label = function(ctx){
+      var v = ctx.parsed.x;
+      return hbarMetric === "qty" ? v.toLocaleString() + " " + T[lang].qtyLabel : fmt(v);
+    };
+    hbarc.update();
+  }
+  if(tbarc){
+    tbarc.options.plugins.tooltip.callbacks.label = function(ctx){
+      return tbarMetric === "rev" ? fmt(ctx.parsed.y) : ctx.parsed.y.toLocaleString() + " " + T[lang].qtyLabel;
+    };
+    tbarc.update();
+  }
+  if(line1c){
+    line1c.options.scales.y.title.text = T[lang].revAxis;
+    line1c.options.scales.y2.title.text = T[lang].qtyAxis;
+    line1c.update();
+  }
+}
+
+// Patch map tooltip
+function getMapTipText(p){
+  var v = getPaisVal(p);
+  return p + "<br>" + (mapMetric === "rev" ? fmt(v) : v.toLocaleString() + " " + T[lang].qtyLabel);
+}
+
 // ---- INIT ----
 buildLeg1(); initPie1(); initHbar(); initLine1(); renderP1();
 buildLeg2Cont(); buildLeg2Cat(); initPie2(); initTbar(); initMap(); renderP2();
+
+// ---- LANG INIT ----
+lang = getLang();
+applyLang();
+patchChartTooltips();
 
 </script>
 </body>
